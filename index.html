@@ -1,0 +1,693 @@
+<html>
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Frontier Bakery | Premium Taste in Hazaribagh</title>
+    
+    <!-- Google Fonts: Playfair Display (Serif) & Inter (Sans) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Tailwind Configuration -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        dark: '#0a0a0a',
+                        charcoal: '#171717',
+                        light: '#fdfbf7',
+                        gold: '#d4af37',
+                        goldhover: '#b5952f',
+                        goldlight: '#f3e5ab'
+                    },
+                    fontFamily: {
+                        serif: ['"Playfair Display"', 'serif'],
+                        sans: ['"Inter"', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'gold-glow': '0 0 20px rgba(212, 175, 55, 0.3)',
+                        'glass': '0 8px 32px 0 rgba(0, 0, 0, 0.37)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom Styles & Animations */
+        body {
+            background-color: #0a0a0a;
+            color: #fdfbf7;
+            overflow-x: hidden;
+        }
+
+        /* Preloader */
+        #preloader {
+            position: fixed;
+            inset: 0;
+            background-color: #0a0a0a;
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.8s ease-in-out;
+        }
+        .loader-ring {
+            width: 60px;
+            height: 60px;
+            border: 2px solid rgba(212, 175, 55, 0.2);
+            border-top-color: #d4af37;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        /* Glassmorphism Utilities */
+        .glass {
+            background: rgba(23, 23, 23, 0.65);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .glass-gold {
+            background: rgba(212, 175, 55, 0.05);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+
+        /* Scroll Reveals */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .delay-100 { transition-delay: 100ms; }
+        .delay-200 { transition-delay: 200ms; }
+        .delay-300 { transition-delay: 300ms; }
+
+        /* Map Dark Mode Filter */
+        .dark-map {
+            filter: grayscale(100%) invert(92%) contrast(83%);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0a0a0a; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #d4af37; }
+
+        /* Hide scrollbar for carousels */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Animations */
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        @keyframes ripple {
+            0% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.3); }
+            100% { box-shadow: 0 0 0 20px rgba(212, 175, 55, 0); }
+        }
+        
+        .animate-float { animation: float 4s ease-in-out infinite; }
+        .hover-ripple:hover { animation: ripple 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) both; }
+
+        /* Parallax Container */
+        .parallax-wrapper {
+            position: relative;
+            overflow: hidden;
+        }
+        .parallax-bg {
+            position: absolute;
+            top: -20%;
+            left: 0;
+            width: 100%;
+            height: 140%;
+            object-fit: cover;
+            z-index: -1;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-gold selection:text-dark">
+
+    <!-- Preloader -->
+    <div id="preloader">
+        <div class="flex flex-col items-center">
+            <div class="loader-ring mb-6"></div>
+            <h1 class="font-serif text-2xl tracking-widest text-gold italic">NFB</h1>
+        </div>
+    </div>
+
+    <!-- Live Notification Popup -->
+    <div id="live-notification" class="fixed bottom-6 left-6 z-50 glass border border-gold/30 rounded-lg p-4 flex items-center gap-4 transform transition-all duration-700 translate-y-32 opacity-0 shadow-lg max-w-sm">
+        <div class="w-10 h-10 rounded-full bg-gold/10 flex items-center justify-center shrink-0">
+            <i data-lucide="bell" class="w-5 h-5 text-gold"></i>
+        </div>
+        <div>
+            <p id="notif-text" class="text-sm font-sans text-light/90"></p>
+            <p class="text-xs text-gold mt-1">Just now</p>
+        </div>
+    </div>
+
+    <!-- Floating WhatsApp -->
+    <a href="https://wa.me/910000000000" target="_blank" class="fixed bottom-6 right-6 z-50 w-14 h-14 bg-green-500 rounded-full flex items-center justify-center shadow-lg hover:bg-green-600 transition-colors duration-300 hover:scale-110 group">
+        <svg class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.82 9.82 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+    </a>
+
+    <!-- Navbar -->
+    <nav id="navbar" class="fixed w-full z-40 transition-all duration-300 px-6 py-4">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <span class="font-serif text-2xl md:text-3xl font-bold tracking-wider text-gold">NFB.</span>
+            </div>
+            
+            <div class="hidden md:flex items-center gap-8 font-sans text-sm font-medium tracking-wide uppercase text-light/80">
+                <a href="#menu" class="hover:text-gold transition-colors">Menu</a>
+                <a href="#dining" class="hover:text-gold transition-colors">Dining</a>
+                <a href="#custom" class="hover:text-gold transition-colors">Custom Cakes</a>
+                <a href="#location" class="hover:text-gold transition-colors">Location</a>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <button class="hidden md:flex items-center gap-2 text-sm font-medium text-gold border border-gold/50 px-5 py-2 rounded-full hover:bg-gold hover:text-dark transition-all duration-300">
+                    Order Online
+                </button>
+                <button class="md:hidden text-light p-2">
+                    <i data-lucide="menu"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative h-screen w-full flex items-center justify-center parallax-wrapper">
+        <div class="absolute inset-0 bg-black/60 z-10"></div>
+        <img src="https://images.unsplash.com/photo-1486427944299-d1955d23e34d?q=80&w=2070&auto=format&fit=crop" alt="Bakery Ambience" class="parallax-bg" id="hero-bg">
+        
+        <div class="relative z-20 text-center px-4 max-w-5xl mx-auto mt-20">
+            <p class="font-sans text-gold tracking-[0.3em] text-sm md:text-base uppercase mb-6 reveal">Hazaribagh's Finest</p>
+            <h1 class="font-serif text-5xl md:text-7xl lg:text-8xl font-bold text-light mb-6 leading-tight reveal delay-100">
+                Freshly Baked <br>
+                <span class="italic text-gold font-light">Luxury.</span>
+            </h1>
+            <p class="font-sans text-lg md:text-xl text-light/80 mb-12 max-w-2xl mx-auto reveal delay-200">
+                Crafted with passion. New Frontier Bakery brings premium taste and artisanal quality to the heart of Matwari.
+            </p>
+            
+            <div class="flex flex-col sm:flex-row gap-4 justify-center items-center reveal delay-300">
+                <a href="#menu" class="bg-gold text-dark px-8 py-4 rounded-full font-sans font-medium text-sm uppercase tracking-wider hover:bg-goldhover transition-colors w-full sm:w-auto text-center hover-ripple shadow-gold-glow">
+                    Explore Menu
+                </a>
+                <a href="#custom" class="bg-transparent border border-light/30 text-light px-8 py-4 rounded-full font-sans font-medium text-sm uppercase tracking-wider hover:bg-light/10 transition-colors w-full sm:w-auto text-center backdrop-blur-sm">
+                    Customize Cake
+                </a>
+            </div>
+        </div>
+
+        <!-- Floating Order Widget -->
+        <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-30 w-[90%] max-w-4xl hidden lg:block reveal delay-300">
+            <div class="glass rounded-2xl p-6 flex items-end gap-4 shadow-2xl border border-white/10">
+                <div class="flex-1">
+                    <label class="block text-xs text-gold/80 uppercase tracking-widest mb-2 font-sans">Craving</label>
+                    <select class="w-full bg-transparent border-b border-white/20 text-light pb-2 focus:outline-none focus:border-gold font-serif text-lg appearance-none cursor-pointer">
+                        <option class="bg-charcoal text-light">Truffle Chocolate Cake</option>
+                        <option class="bg-charcoal text-light">Red Velvet Pastry</option>
+                        <option class="bg-charcoal text-light">Farmhouse Pizza</option>
+                        <option class="bg-charcoal text-light">Assorted Cookies Box</option>
+                    </select>
+                </div>
+                <div class="flex-1">
+                    <label class="block text-xs text-gold/80 uppercase tracking-widest mb-2 font-sans">Pickup Time</label>
+                    <select class="w-full bg-transparent border-b border-white/20 text-light pb-2 focus:outline-none focus:border-gold font-serif text-lg appearance-none cursor-pointer">
+                        <option class="bg-charcoal text-light">Today, in 30 mins</option>
+                        <option class="bg-charcoal text-light">Today, Evening</option>
+                        <option class="bg-charcoal text-light">Tomorrow Morning</option>
+                    </select>
+                </div>
+                <button class="bg-gold text-dark h-12 px-8 rounded-lg font-sans font-semibold hover:bg-light transition-colors flex items-center gap-2">
+                    Quick Order <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Experience -->
+    <section id="menu" class="py-24 bg-dark relative border-t border-white/5">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-16 reveal">
+                <div>
+                    <h2 class="font-serif text-4xl md:text-5xl font-bold mb-4">Our Masterpieces</h2>
+                    <p class="font-sans text-light/60 max-w-md">From artisan breads to decadent desserts, every item is baked fresh daily in our hygienic kitchen.</p>
+                </div>
+                <div class="flex gap-4 mt-6 md:mt-0 font-sans text-sm">
+                    <button class="text-gold border-b border-gold pb-1">Cakes & Pastries</button>
+                    <button class="text-light/50 hover:text-light transition-colors pb-1">Fast Food</button>
+                    <button class="text-light/50 hover:text-light transition-colors pb-1">Beverages</button>
+                </div>
+            </div>
+
+            <!-- Horizontal Scroll Container -->
+            <div class="flex overflow-x-auto gap-8 pb-10 no-scrollbar reveal delay-100 snap-x">
+                
+                <!-- Product Card 1 -->
+                <div class="min-w-[300px] w-[300px] md:min-w-[350px] group cursor-pointer snap-start">
+                    <div class="overflow-hidden rounded-2xl mb-6 relative aspect-[4/5] bg-charcoal flex items-center justify-center">
+                        <img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?q=80&w=800&auto=format&fit=crop" alt="Royal Chocolate Truffle Cake" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 text-transparent">
+                        <!-- Updated Overlay: Always visible slightly on mobile, fully visible on hover for desktop -->
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
+                            <button class="bg-gold text-dark w-full py-3 rounded-lg font-medium tracking-wide flex justify-center items-center gap-2 hover:bg-light transition-colors">
+                                Add to Order <i data-lucide="shopping-bag" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="font-serif text-xl mb-1 group-hover:text-gold transition-colors">Royal Chocolate Truffle</h3>
+                            <p class="font-sans text-sm text-light/50">Rich, dense, and premium.</p>
+                        </div>
+                        <span class="font-sans font-medium text-gold">₹450+</span>
+                    </div>
+                </div>
+
+                <!-- Product Card 2 -->
+                <div class="min-w-[300px] w-[300px] md:min-w-[350px] group cursor-pointer snap-start">
+                    <div class="overflow-hidden rounded-2xl mb-6 relative aspect-[4/5] bg-charcoal flex items-center justify-center">
+                        <!-- Fixed broken image URL here -->
+                        <img src="https://images.unsplash.com/photo-1483695028939-5bb13f8648b0?q=80&w=800&auto=format&fit=crop" alt="Red Velvet Pastry" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 text-transparent">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
+                            <button class="bg-gold text-dark w-full py-3 rounded-lg font-medium tracking-wide flex justify-center items-center gap-2 hover:bg-light transition-colors">
+                                Add to Order <i data-lucide="shopping-bag" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="font-serif text-xl mb-1 group-hover:text-gold transition-colors">Red Velvet Slice</h3>
+                            <p class="font-sans text-sm text-light/50">Soft cream cheese frosting.</p>
+                        </div>
+                        <span class="font-sans font-medium text-gold">₹90</span>
+                    </div>
+                </div>
+
+                <!-- Product Card 3 -->
+                <div class="min-w-[300px] w-[300px] md:min-w-[350px] group cursor-pointer snap-start">
+                    <div class="overflow-hidden rounded-2xl mb-6 relative aspect-[4/5] bg-charcoal flex items-center justify-center">
+                        <img src="https://images.unsplash.com/photo-1513104890138-7c749659a591?q=80&w=800&auto=format&fit=crop" alt="Farmhouse Pizza" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 text-transparent">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
+                            <button class="bg-gold text-dark w-full py-3 rounded-lg font-medium tracking-wide flex justify-center items-center gap-2 hover:bg-light transition-colors">
+                                Add to Order <i data-lucide="shopping-bag" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="font-serif text-xl mb-1 group-hover:text-gold transition-colors">Farmhouse Pizza</h3>
+                            <p class="font-sans text-sm text-light/50">Fresh veggies, gooey cheese.</p>
+                        </div>
+                        <span class="font-sans font-medium text-gold">₹250</span>
+                    </div>
+                </div>
+
+                <!-- Product Card 4 -->
+                <div class="min-w-[300px] w-[300px] md:min-w-[350px] group cursor-pointer snap-start">
+                    <div class="overflow-hidden rounded-2xl mb-6 relative aspect-[4/5] bg-charcoal flex items-center justify-center">
+                        <img src="https://images.unsplash.com/photo-1499636136210-6f4ee915583e?q=80&w=800&auto=format&fit=crop" alt="Artisan Butter Cookies" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 text-transparent">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
+                            <button class="bg-gold text-dark w-full py-3 rounded-lg font-medium tracking-wide flex justify-center items-center gap-2 hover:bg-light transition-colors">
+                                Add to Order <i data-lucide="shopping-bag" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="font-serif text-xl mb-1 group-hover:text-gold transition-colors">Artisan Butter Cookies</h3>
+                            <p class="font-sans text-sm text-light/50">Melt-in-mouth traditional bake.</p>
+                        </div>
+                        <span class="font-sans font-medium text-gold">₹150</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Direct Order Advantage -->
+    <section class="py-20 bg-charcoal">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16 reveal">
+                <h2 class="font-serif text-3xl md:text-4xl font-bold mb-4">Why Order Directly?</h2>
+                <p class="font-sans text-light/60">Skip the middleman. Experience the New Frontier standard.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Card 1 -->
+                <div class="glass-gold p-8 rounded-2xl text-center hover:-translate-y-2 transition-transform duration-500 reveal delay-100">
+                    <div class="w-16 h-16 mx-auto bg-dark rounded-full flex items-center justify-center border border-gold/30 mb-6">
+                        <i data-lucide="leaf" class="text-gold w-8 h-8"></i>
+                    </div>
+                    <h3 class="font-serif text-xl mb-2">Absolute Freshness</h3>
+                    <p class="font-sans text-sm text-light/60">Direct orders are prepared exactly when you need them. No app delays.</p>
+                </div>
+                <!-- Card 2 -->
+                <div class="glass-gold p-8 rounded-2xl text-center hover:-translate-y-2 transition-transform duration-500 reveal delay-200">
+                    <div class="w-16 h-16 mx-auto bg-dark rounded-full flex items-center justify-center border border-gold/30 mb-6">
+                        <i data-lucide="indian-rupee" class="text-gold w-8 h-8"></i>
+                    </div>
+                    <h3 class="font-serif text-xl mb-2">Best Pricing</h3>
+                    <p class="font-sans text-sm text-light/60">No hidden delivery app markups. Enjoy our premium menu at its true value.</p>
+                </div>
+                <!-- Card 3 -->
+                <div class="glass-gold p-8 rounded-2xl text-center hover:-translate-y-2 transition-transform duration-500 reveal delay-300">
+                    <div class="w-16 h-16 mx-auto bg-dark rounded-full flex items-center justify-center border border-gold/30 mb-6">
+                        <i data-lucide="clock" class="text-gold w-8 h-8"></i>
+                    </div>
+                    <h3 class="font-serif text-xl mb-2">Priority Pickup</h3>
+                    <p class="font-sans text-sm text-light/60">Skip the peak hour rush. Pre-order and collect directly from our ground floor counter.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Dining Experience (Parallax) -->
+    <section id="dining" class="py-32 relative overflow-hidden flex items-center parallax-wrapper min-h-[80vh]">
+        <div class="absolute inset-0 bg-black/70 z-10"></div>
+        <img src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=2047&auto=format&fit=crop" alt="Cafe Interior" class="parallax-bg" id="dining-bg">
+        
+        <div class="relative z-20 max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            <div class="reveal">
+                <p class="font-sans text-gold tracking-widest text-sm uppercase mb-4">The Ambiance</p>
+                <h2 class="font-serif text-4xl md:text-6xl font-bold mb-6 leading-tight">Elevate Your <br>Casual Dining.</h2>
+                <p class="font-sans text-lg text-light/80 mb-8 max-w-lg">
+                    Whether you're grabbing a quick takeaway from our energetic ground floor or unwinding with friends at our rooftop restaurant, New Frontier Bakery offers a clean, family-friendly space in the heart of Matwari.
+                </p>
+                <ul class="space-y-4 mb-10 font-sans text-light/90">
+                    <li class="flex items-center gap-3"><i data-lucide="check-circle-2" class="text-gold w-5 h-5"></i> Fast Digital Billing</li>
+                    <li class="flex items-center gap-3"><i data-lucide="check-circle-2" class="text-gold w-5 h-5"></i> Impeccable Kitchen Hygiene</li>
+                    <li class="flex items-center gap-3"><i data-lucide="check-circle-2" class="text-gold w-5 h-5"></i> Scenic Rooftop Seating</li>
+                </ul>
+                <a href="#location" class="inline-block border border-gold text-gold px-8 py-3 rounded-full font-sans text-sm uppercase tracking-wider hover:bg-gold hover:text-dark transition-all duration-300">
+                    Plan Your Visit
+                </a>
+            </div>
+            <div class="grid grid-cols-2 gap-4 reveal delay-200">
+                <img src="https://images.unsplash.com/photo-1559339352-11d035aa65de?q=80&w=800&auto=format&fit=crop" alt="Coffee" class="rounded-xl w-full h-64 object-cover mt-12 shadow-2xl">
+                <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?q=80&w=800&auto=format&fit=crop" alt="Pizza" class="rounded-xl w-full h-64 object-cover shadow-2xl">
+            </div>
+        </div>
+    </section>
+
+    <!-- Custom Orders & Events -->
+    <section id="custom" class="py-24 bg-dark">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16 reveal">
+                <h2 class="font-serif text-4xl md:text-5xl font-bold mb-4">Celebrations, Crafted.</h2>
+                <p class="font-sans text-light/60 max-w-2xl mx-auto">From elegant wedding tiers to fun themed birthday cakes, our master bakers bring your vision to life. Bulk orders available for local events.</p>
+            </div>
+
+            <!-- Image Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12">
+                <div class="relative overflow-hidden rounded-xl group aspect-square reveal delay-100">
+                    <img src="https://images.unsplash.com/photo-1535141192574-5d4897c12636?q=80&w=800&auto=format&fit=crop" alt="Wedding Cake" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    <div class="absolute inset-0 bg-black/40 group-hover:bg-black/60 transition-colors duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
+                        <span class="font-serif text-2xl text-light">Wedding Cakes</span>
+                    </div>
+                </div>
+                <div class="relative overflow-hidden rounded-xl group aspect-square reveal delay-200">
+                    <img src="https://images.unsplash.com/photo-1562777717-b6aff3dc28e4?q=80&w=800&auto=format&fit=crop" alt="Theme Cake" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    <div class="absolute inset-0 bg-black/40 group-hover:bg-black/60 transition-colors duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
+                        <span class="font-serif text-2xl text-light">Themed Birthday</span>
+                    </div>
+                </div>
+                <div class="relative overflow-hidden rounded-xl group aspect-square reveal delay-300">
+                    <img src="https://images.unsplash.com/photo-1576618148400-f54bed99fcfd?q=80&w=800&auto=format&fit=crop" alt="Cupcakes" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    <div class="absolute inset-0 bg-black/40 group-hover:bg-black/60 transition-colors duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
+                        <span class="font-serif text-2xl text-light">Event Catering</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center reveal">
+                <p class="font-sans text-sm text-gold mb-6 uppercase tracking-widest">Custom cakes starting from ₹400</p>
+                <button class="bg-white text-dark px-10 py-4 rounded-full font-sans font-semibold hover:bg-gold transition-colors shadow-lg hover:shadow-gold-glow">
+                    Discuss Your Design
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Amenities / Icon Grid -->
+    <section class="py-16 bg-charcoal border-y border-white/5">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+                <div class="text-center reveal">
+                    <i data-lucide="chef-hat" class="w-10 h-10 text-gold mx-auto mb-4"></i>
+                    <h4 class="font-sans font-medium text-light">Master Bakers</h4>
+                </div>
+                <div class="text-center reveal delay-100">
+                    <i data-lucide="sparkles" class="w-10 h-10 text-gold mx-auto mb-4"></i>
+                    <h4 class="font-sans font-medium text-light">Hygienic Prep</h4>
+                </div>
+                <div class="text-center reveal delay-200">
+                    <i data-lucide="coffee" class="w-10 h-10 text-gold mx-auto mb-4"></i>
+                    <h4 class="font-sans font-medium text-light">Rooftop Cafe</h4>
+                </div>
+                <div class="text-center reveal delay-300">
+                    <i data-lucide="zap" class="w-10 h-10 text-gold mx-auto mb-4"></i>
+                    <h4 class="font-sans font-medium text-light">Fast Billing</h4>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Location & Contact -->
+    <section id="location" class="py-24 bg-dark">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                <!-- Info -->
+                <div class="reveal">
+                    <h2 class="font-serif text-4xl md:text-5xl font-bold mb-6">Find Us in <br><span class="text-gold italic font-light">Matwari.</span></h2>
+                    <p class="font-sans text-light/70 mb-8 max-w-md leading-relaxed">
+                        Centrally located near PTC Chowk. Drop by for a quick takeaway or head upstairs to our casual rooftop setting. Easy roadside access available.
+                    </p>
+                    
+                    <div class="space-y-6 font-sans">
+                        <div class="flex items-start gap-4">
+                            <div class="bg-charcoal p-3 rounded-full border border-gold/30">
+                                <i data-lucide="map-pin" class="text-gold w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-light mb-1">Address</h4>
+                                <p class="text-sm text-light/60">Near PTC Chowk, Matwari,<br>Hazaribagh – 825301, Jharkhand</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <div class="bg-charcoal p-3 rounded-full border border-gold/30">
+                                <i data-lucide="clock" class="text-gold w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-light mb-1">Timings</h4>
+                                <p class="text-sm text-light/60">Open Daily: 9:00 AM – 10:00 PM</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <div class="bg-charcoal p-3 rounded-full border border-gold/30">
+                                <i data-lucide="phone" class="text-gold w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-light mb-1">Phone Orders</h4>
+                                <p class="text-sm text-light/60">+91 00000 00000</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Map -->
+                <div class="w-full h-[400px] md:h-[500px] rounded-2xl overflow-hidden border border-white/10 reveal delay-200 relative group">
+                    <div class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors z-10 pointer-events-none"></div>
+                    <iframe 
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d14614.939882200508!2d85.3524!3d23.9925!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjPCsDU5JzMzLjAiTiA4NcKwMjEnMDguNiJF!5e0!3m2!1sen!2sin!4v1620000000000!5m2!1sen!2sin" 
+                        class="w-full h-full border-0 dark-map" 
+                        allowfullscreen="" 
+                        loading="lazy">
+                    </iframe>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Final CTA -->
+    <section class="py-24 bg-charcoal relative overflow-hidden">
+        <!-- Abstract background elements -->
+        <div class="absolute top-0 right-0 w-64 h-64 bg-gold/5 rounded-full blur-3xl"></div>
+        <div class="absolute bottom-0 left-0 w-96 h-96 bg-gold/5 rounded-full blur-3xl"></div>
+        
+        <div class="relative z-10 max-w-4xl mx-auto px-6 text-center reveal">
+            <h2 class="font-serif text-5xl md:text-7xl font-bold mb-6 leading-tight">Order Direct. <br><span class="text-gold">Taste Better.</span></h2>
+            <p class="font-sans text-xl text-light/80 mb-10">Experience the true freshness of Hazaribagh's favorite bakery.</p>
+            <button class="bg-gold text-dark px-12 py-5 rounded-full font-sans font-bold text-lg hover:bg-light transition-all duration-300 shadow-gold-glow hover:-translate-y-1">
+                Place an Order Now
+            </button>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-[#050505] pt-16 pb-8 border-t border-white/5">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+                <div class="col-span-1 md:col-span-2">
+                    <span class="font-serif text-3xl font-bold tracking-wider text-gold mb-4 block">NFB.</span>
+                    <p class="font-sans text-sm text-light/50 max-w-sm">
+                        New Frontier Bakery. A modern bakery and casual dining spot recognized for its wide variety of fresh baked goods and pleasant rooftop cafe experience in Hazaribagh.
+                    </p>
+                </div>
+                <div>
+                    <h4 class="font-sans text-light font-medium mb-4 uppercase tracking-wider text-sm">Quick Links</h4>
+                    <ul class="space-y-2 text-sm font-sans text-light/50">
+                        <li><a href="#menu" class="hover:text-gold transition-colors">Digital Menu</a></li>
+                        <li><a href="#custom" class="hover:text-gold transition-colors">Custom Cakes</a></li>
+                        <li><a href="#dining" class="hover:text-gold transition-colors">Rooftop Cafe</a></li>
+                        <li><a href="#location" class="hover:text-gold transition-colors">Contact & Map</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-sans text-light font-medium mb-4 uppercase tracking-wider text-sm">Follow Us</h4>
+                    <div class="flex gap-4">
+                        <a href="#" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-light/70 hover:bg-gold hover:text-dark transition-all duration-300">
+                            <i data-lucide="instagram" class="w-5 h-5"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-light/70 hover:bg-gold hover:text-dark transition-all duration-300">
+                            <i data-lucide="facebook" class="w-5 h-5"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Updated Footer Copyright Area -->
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left font-sans text-xs text-light/40 pt-8 border-t border-white/5">
+                <p>&copy; 2026 New Frontier Bakery, Hazaribagh. All rights reserved.</p>
+                <p>Developed by <span class="text-gold font-medium tracking-wide">Teched Studios</span></p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // Preloader Logic
+        window.addEventListener('load', () => {
+            const preloader = document.getElementById('preloader');
+            preloader.style.opacity = '0';
+            setTimeout(() => {
+                preloader.style.display = 'none';
+            }, 800);
+        });
+
+        // Navbar Glassmorphism on Scroll
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('glass', 'py-2');
+                navbar.classList.remove('py-4');
+            } else {
+                navbar.classList.remove('glass', 'py-2');
+                navbar.classList.add('py-4');
+            }
+        });
+
+        // Scroll Reveal Animation (Intersection Observer)
+        const revealElements = document.querySelectorAll('.reveal');
+        const revealOptions = {
+            threshold: 0.15,
+            rootMargin: "0px 0px -50px 0px"
+        };
+
+        const revealOnScroll = new IntersectionObserver(function(entries, observer) {
+            entries.forEach(entry => {
+                if (!entry.isIntersecting) {
+                    return;
+                } else {
+                    entry.target.classList.add('active');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, revealOptions);
+
+        revealElements.forEach(el => {
+            revealOnScroll.observe(el);
+        });
+
+        // Simple Parallax Effect
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const heroBg = document.getElementById('hero-bg');
+            const diningBg = document.getElementById('dining-bg');
+            
+            if (heroBg) heroBg.style.transform = `translateY(${scrolled * 0.4}px)`;
+            
+            // Calculate relative to the dining section's position
+            const diningSection = document.getElementById('dining');
+            if(diningSection) {
+                const diningTop = diningSection.offsetTop;
+                if(scrolled > diningTop - window.innerHeight) {
+                    const relativeScroll = scrolled - (diningTop - window.innerHeight);
+                    diningBg.style.transform = `translateY(${relativeScroll * 0.2}px)`;
+                }
+            }
+        });
+
+        // Fake Live Notification System
+        const notifications = [
+            "Rahul from Matwari just ordered a Truffle Cake!",
+            "Priya just reserved a table at the Rooftop Cafe.",
+            "A custom wedding cake order was just placed!",
+            "Amit from PTC Chowk just ordered a Pizza Combo.",
+            "Sneha ordered a box of Artisan Cookies."
+        ];
+        
+        const notifElement = document.getElementById('live-notification');
+        const notifText = document.getElementById('notif-text');
+
+        function showNotification() {
+            // Pick random notification
+            const randomText = notifications[Math.floor(Math.random() * notifications.length)];
+            notifText.innerText = randomText;
+            
+            // Show
+            notifElement.classList.remove('translate-y-32', 'opacity-0');
+            notifElement.classList.add('translate-y-0', 'opacity-100');
+
+            // Hide after 4 seconds
+            setTimeout(() => {
+                notifElement.classList.remove('translate-y-0', 'opacity-100');
+                notifElement.classList.add('translate-y-32', 'opacity-0');
+            }, 4000);
+        }
+
+        // Start notification loop (shows a notification every 15 seconds)
+        setTimeout(() => {
+            showNotification();
+            setInterval(showNotification, 15000);
+        }, 5000); // Initial delay of 5 seconds
+
+    </script>
+</body>
+</html>
+
